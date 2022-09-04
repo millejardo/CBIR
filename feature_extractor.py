@@ -1,6 +1,6 @@
-from tensorflow.keras.preprocessing import image
-from tensorflow.keras.applications.vgg16 import VGG16, preprocess_input
-from tensorflow.keras.models import Model
+from keras.utils import img_to_array
+from keras.applications.vgg16 import VGG16, preprocess_input
+from keras.models import Model
 import numpy as np
 
 # See https://keras.io/api/applications/ for details
@@ -19,11 +19,18 @@ class FeatureExtractor:
         Returns:
             feature (np.ndarray): deep feature with the shape=(4096, )
         """
-        img = img.resize((224, 224))  # VGG must take a 224x224 img as an input
-        img = img.convert('RGB')  # Make sure img is color
-        x = image.img_to_array(img)  # To np.array. Height x Width x Channel. dtype=float32
-        x = np.expand_dims(x, axis=0)  # (H, W, C)->(1, H, W, C), where the first elem is the number of img
-        x = preprocess_input(x)  # Subtracting avg values for each pixel
-        feature = self.model.predict(x)[0]  # (1, 4096) -> (4096, )
-        return feature / np.linalg.norm(feature)  # Normalize
-
+        
+        # Mengubah ukuran gambar. Model VGG harus menggunakan gambar dengan skala 224x224 sebagai input
+        img = img.resize((224, 224))
+        # mengubah gambar menjadi berwarna
+        img = img.convert('RGB')
+        # Mengubah menjadi gambar menjadi data 3D array sebagai Height(H) x Width(W) x Channel(C). dtype=float32
+        x = img_to_array(img)
+        # (H, W, C)->(1, H, W, C), menambahkan data dimensi array keempat pada elemen pertama adalah angka index dari img
+        x = np.expand_dims(x, axis=0)
+        # mengurangi nilai rata-rata untuk setiap piksel
+        x = preprocess_input(x)
+        # (1, 4096) -> (4096, ), membuat model fitur
+        feature = self.model.predict(x)[0]
+        # Menormalisasikan
+        return feature / np.linalg.norm(feature)

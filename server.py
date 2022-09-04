@@ -7,7 +7,7 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-# Read image features
+# Membaca fitur gambar
 fe = FeatureExtractor()
 features = []
 img_paths = []
@@ -22,23 +22,37 @@ def index():
     if request.method == 'POST':
         file = request.files['query_img']
 
-        # Save query image
+        # Menyimpan query gambar
         img = Image.open(file.stream)  # PIL image
         uploaded_img_path = "static/uploaded/" + datetime.now().isoformat().replace(":", ".") + "_" + file.filename
         img.save(uploaded_img_path)
 
-        # Run search
+        # Batas Nilai
+        per = np.linalg.norm(1.0)
+
+        # Menjalankan pencarian
         query = fe.extract(img)
-        dists = np.linalg.norm(features-query, axis=1)  # L2 distances to features
-        ids = np.argsort(dists)[:30]  # Top 30 results
+        dists = np.linalg.norm(features-query, axis=1)  # Mengukur jarak L2 ke features
+        ids = np.argsort(dists)[:20]  # Top 20 results
         scores = [(dists[id], img_paths[id]) for id in ids]
+        idf = np.argsort(dists)[:1] #Top 1
 
-        return render_template('index.html',
-                               query_path=uploaded_img_path,
-                               scores=scores)
+        # Mengecek gambar yang diinput
+        if dists[idf] < per:
+            ket = "Benar"
+            return render_template('index.html',
+                                query_path=uploaded_img_path,
+                                scores=scores,
+                                ket=ket)
+        else:
+            ket = "Bukan"
+            return render_template('index.html',
+                                query_path=uploaded_img_path,
+                                ket=ket)
+   
     else:
-        return render_template('index.html')
+        return render_template('index.html') # Menampilkan halaman pencarian
 
-
+# Menjalankan aplikasi
 if __name__=="__main__":
-    app.run("0.0.0.0")
+    app.run("127.0.0.1")
