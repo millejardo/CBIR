@@ -22,7 +22,7 @@ class FeatureExtractor:
         
         # Mengubah ukuran gambar. Model VGG harus menggunakan gambar dengan skala 224x224 sebagai input
         img = img.resize((224, 224))
-        # mengubah gambar menjadi berwarna
+        # Mengubah gambar menjadi berwarna
         img = img.convert('RGB')
         # Mengubah menjadi gambar menjadi data 3D array sebagai Height(H) x Width(W) x Channel(C). dtype=float32
         x = img_to_array(img)
@@ -31,6 +31,6 @@ class FeatureExtractor:
         # mengurangi nilai rata-rata untuk setiap piksel
         x = preprocess_input(x)
         # (1, 4096) -> (4096, ), membuat model fitur
-        feature = self.model.predict(x)[0]
+        feature = self.model.predict(x)
         # Menormalisasikan
         return feature / np.linalg.norm(feature)

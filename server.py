@@ -7,7 +7,7 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-# Membaca fitur gambar
+# Membaca dan menghitung jarak kesamaan fitur gambar
 fe = FeatureExtractor()
 features = []
 img_paths = []
@@ -24,11 +24,9 @@ def index():
 
         # Menyimpan query gambar
         img = Image.open(file.stream)  # PIL image
-        uploaded_img_path = "static/uploaded/" + datetime.now().isoformat().replace(":", ".") + "_" + file.filename
+        uploaded_img_path = "static/uploaded/" + \
+            datetime.now().isoformat().replace(":", ".") + "_" + file.filename
         img.save(uploaded_img_path)
-
-        # Batas Nilai
-        per = np.linalg.norm(1.0)
 
         # Menjalankan pencarian
         query = fe.extract(img)
@@ -37,7 +35,13 @@ def index():
         scores = [(dists[id], img_paths[id]) for id in ids]
         idf = np.argsort(dists)[:1] #Top 1
 
+        # Batas Nilai
+        per = np.linalg.norm(1.0)
+
         # Mengecek gambar yang diinput
+        print(scores)
+        print(dists)
+        print(query)
         if dists[idf] < per:
             ket = "Benar"
             return render_template('index.html',

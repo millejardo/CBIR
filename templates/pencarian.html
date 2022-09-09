@@ -1,34 +1,29 @@
 <html>
-
 <head>
   <style type="text/css">
     body {
       margin: 0;
       width: 100%;
       font-family: Arial;
-      background-color: darkgray;
     }
-
     nav {
       padding: 2px;
       border-top: 2px solid #87cefa;
       border-bottom: 2px solid #87cefa;
       overflow: hidden;
-      background-color: rgba(79, 19, 97, 0.9);
+      background-color: rgba(247, 39, 177, 0.9);
       position: fixed;
       z-index: 999;
       width: 100%;
       top: 0px;
       height: 100px;
     }
-
     .container {
       padding-top: 100px;
       width: 90%;
       margin: auto;
-      background-color: darkgray;
+      background-color: white;
     }
-
     .col {
       float: left;
     }
@@ -52,39 +47,33 @@
 
     .hasil {
       float: left;
-      border: solid #333 5px;
-      margin-right: 20px;
+      border: solid #333 5px; 
+      margin-right: 20px; 
       margin-bottom: 20px;
       width: auto;
       height: auto;
     }
-
     .hasil img {
       display: block;
     }
 
-    table {
-      width: 500px;
-      /* Ganti menjadi 100% untuk tampilan responsif */
+    table{
+      width: 500px; /* Ganti menjadi 100% untuk tampilan responsif */
       border-collapse: collapse;
       margin: 30px 0px 30px;
       background-color: #fff;
       font-size: 14px;
     }
-
     table tr {
       height: 40px;
     }
-
     table th {
       background: #333;
       color: white;
       font-weight: bold;
       font-size: 18px;
     }
-
-    table td,
-    th {
+    table td, th {
       padding: 6px 6px 6px 10px;
       border: 1px solid #ccc;
     }
@@ -96,20 +85,15 @@
 
     /* Penomoran otomatis pada baris */
     .css-serial {
-      counter-reset: serial-number;
-      /* Atur penomoran ke 0 */
+      counter-reset: serial-number;  /* Atur penomoran ke 0 */
     }
-
     .css-serial td:first-child:before {
-      counter-increment: serial-number;
-      /* Kenaikan penomoran */
-      content: counter(serial-number);
-      /* Tampilan counter */
+      counter-increment: serial-number;  /* Kenaikan penomoran */
+      content: counter(serial-number);  /* Tampilan counter */
     }
-
     .btn {
       border-radius: 2px;
-      background-color: #d087fa;
+      background-color: #87cefa;
       border: none;
       color: black;
       padding: 10px 28px;
@@ -121,13 +105,12 @@
       cursor: pointer;
     }
 
-    .btn:hover {
-      opacity: 0.9;
+    .btn:hover{
+      opacity:0.9;
     }
   </style>
   <title>Mobil</title>
 </head>
-
 <body>
   <nav>
     <div class="row" style="padding-left: 10px; padding-right: 10px;">
@@ -135,7 +118,7 @@
         <img src="{{url_for('static',filename = 'logo/UGM.png')}}" width="90px" height="90px" style="padding: 5px;">
       </div>
       <div class="col" style="width: 40%; float: left; padding: 8px;">
-        <b style="font-size: 25px; color:white;">Car Image Search Engine</b>
+        <b style="font-size: 25px;">Car Image Search Engine</b>
         <form method="POST" enctype="multipart/form-data">
           <input class="btn" type="file" name="query_img">
           <input class="btn" type="submit">
@@ -148,15 +131,36 @@
     </div>
   </nav>
   <div class="container">
-    <div class="row">
-      <div class="col-duo">
+    <div class="col-one" align="center">
+      <div class="row">
         <h2>Query:</h2>
         {% if query_path %}
         <img src="{{ query_path }}" width="300px" height="auto">
         {% endif %}
       </div>
-      <h2>Hasil Data Kemiripan Citra Mobil</h2>
-      <div class="col-duo" style="height: 50%; overflow: auto">
+    </div>
+    <div class="col-one">
+      <div class="row">
+        <h2>Keterangan</h2>
+        {% if ket %}
+        <p>Gambar Query yang dipilih <b>{{ket}}</b> Mobil</p>
+        {% endif %}
+      </div>
+      <div class="row">
+        <h2>Gambar Mirip:</h2>
+        <div>
+          {% for score in scores %} 
+          <div class="hasil">
+            <img src="{{ score[1] }}" width="180px">
+            <div>
+              <i>{{ score[0] }}</i>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="row">
+        <h2>Hasil Data Kemiripan Citra Mobil</h2>
         <table class="css-serial">
           <thead>
             <tr>
@@ -177,28 +181,6 @@
         </table>
       </div>
     </div>
-    <div class="col-one">
-      <div class="row">
-        <h2>Keterangan</h2>
-        {% if ket %}
-        <p>Gambar Query yang dipilih <b>{{ket}}</b> Mobil</p>
-        {% endif %}
-      </div>
-      <div class="row">
-        <h2>Gambar Mirip:</h2>
-        <div>
-          {% for score in scores %}
-          <div class="hasil">
-            <img src="{{ score[1] }}" width="180px">
-            <div>
-              <i>{{ score[0] }}</i>
-            </div>
-          </div>
-          {% endfor %}
-        </div>
-      </div>
-    </div>
   </div>
 </body>
-
 </html>
